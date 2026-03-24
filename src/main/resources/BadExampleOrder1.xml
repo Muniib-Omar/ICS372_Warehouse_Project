@@ -1,0 +1,17 @@
+<Orders>
+    <Order id="486">
+        <OrderType>Delivery</OrderType>
+        <Item type="Keyboard">
+            <Price>19.99</Price>
+            <Quantity>1</Quantity>
+        </Item>
+    </Order>
+
+    <Order id="487">
+        <OrderType>Delivery</OrderType>
+        <Item type="Mouse">
+            <Price>abc</Price>
+            <Quantity>2</Quantity>
+        </Item>
+    </Order>
+</Orders>

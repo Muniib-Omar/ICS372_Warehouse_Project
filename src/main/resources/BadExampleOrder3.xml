@@ -1,0 +1,9 @@
+<Orders>
+    <Order id="501">
+        <OrderType>Pickup</OrderType>
+        <Item type="Tablet">
+            <Price>299.99</Price>
+            <Quantity>-1</Quantity>
+        </Item>
+    </Order>
+</Orders>
