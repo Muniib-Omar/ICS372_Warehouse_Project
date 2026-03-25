@@ -1,4 +1,4 @@
-package model;
+import persistence.OrderPersistence;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -28,7 +28,8 @@ public class OrderPersistence {
             return (List<Order>) ois.readObject();
 
         } catch (Exception e) {
-            return new ArrayList<>(); // if file doesn't exist
+            e.printStackTrace();  
+            return new ArrayList<>();
         }
     }
 }
