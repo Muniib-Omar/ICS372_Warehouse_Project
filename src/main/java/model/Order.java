@@ -1,9 +1,10 @@
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Order {
+public abstract class Order implements Serializable {
     private String orderId;
     private OrderType type;
     private long orderDate;
