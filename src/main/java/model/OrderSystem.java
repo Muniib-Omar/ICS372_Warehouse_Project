@@ -8,6 +8,7 @@ public class OrderSystem {
 
     public OrderSystem() {
         // Load saved orders on startup
+        System.out.println("LOADING ORDERS..."); //Test if constructor runs
         orders = OrderPersistence.loadOrders();
     }
 
