@@ -1,16 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="edu.metrostate.warehouseapp.HelloController">
+<VBox spacing="10" alignment="CENTER" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="edu.metrostate.warehouseapp.HelloController" prefWidth="900" prefHeight="600">
   <padding>
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
   </padding>
 
-  <Label fx:id="welcomeText"/>
-  <Button text="Hello!" onAction="#onHelloButtonClick"/>
+  <Label text="Warehouse Management Dashboard" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+
+  <HBox spacing="15" alignment="CENTER_LEFT">
+    <Label text="Current Warehouse:" style="-fx-font-weight: bold;"/>
+    <ComboBox fx:id="warehouseSelector" onAction="#handleWarehouseChange" prefWidth="200"/>
+  </HBox>
+
+  <!-- The Table showing all orders -->
+  <TableView fx:id="orderTable" VBox.vgrow="ALWAYS">
+    <columns>
+      <TableColumn fx:id="colId" text="Order ID" prefWidth="80"/>
+      <TableColumn fx:id="colType" text="Order Type" prefWidth="180"/>
+      <TableColumn fx:id="colSource" text="Source" prefWidth="120"/>
+      <TableColumn fx:id="colPrice" text="Total Price" prefWidth="100"/>
+      <TableColumn fx:id="colStatus" text="Status" prefWidth="150"/>
+    </columns>
+  </TableView>
+
+  <!-- Interaction Buttons -->
+  <HBox spacing="20" alignment="CENTER">
+    <Button text="▶ Start Fulfilling" onAction="#handleStartFulfilling"
+            style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;"/>
+
+    <Button text="✔ Complete Order" onAction="#handleCompleteOrder"
+            style="-fx-background-color: #2980b9; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;"/>
+
+    <Button text="✖ Cancel Order" onAction="#handleCancelOrder"
+            style="-fx-background-color: #c0392b; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;"/>
+  </HBox>
 </VBox>

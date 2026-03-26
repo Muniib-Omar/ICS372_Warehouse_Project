@@ -4,12 +4,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The base Order class.
+ * Note: Must be public so JavaFX TableView can access the getters via reflection.
+ */
 public abstract class Order implements Serializable {
     private String orderId;
     private OrderType type;
     private long orderDate;
     private OrderStatus status;
-    private String source; // Feature 3: Tracks if from Bullseye or WallyWorld
+    private String source;
     private List<Item> items;
 
     public Order(String orderId, OrderType type, long orderDate, String source) {
@@ -22,6 +26,7 @@ public abstract class Order implements Serializable {
     }
 
     // Requirement 8: Calculate the total price of the order
+    // JavaFX looks for "getTotalPrice" to fill the "Total Price" column
     public double getTotalPrice() {
         double total = 0;
         for (Item item : items) {
@@ -52,7 +57,7 @@ public abstract class Order implements Serializable {
         this.status = OrderStatus.CANCELED;
     }
 
-    // Getters
+    // Getters - Must be public for the TableView to see them
     public void addItem(Item item) { items.add(item); }
     public String getOrderId() { return orderId; }
     public OrderType getType() { return type; }
