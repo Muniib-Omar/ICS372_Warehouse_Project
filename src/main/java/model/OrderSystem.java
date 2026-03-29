@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderSystem {
@@ -7,15 +8,16 @@ public class OrderSystem {
     private List<Order> orders;
 
     public OrderSystem() {
-        // Load saved orders on startup
-        System.out.println("LOADING ORDERS..."); //Test if constructor runs
+        System.out.println("LOADING ORDERS...");
         orders = OrderPersistence.loadOrders();
+
+        if (orders == null) {
+            orders = new ArrayList<>();
+        }
     }
 
     public void addOrders(List<Order> newOrders) {
         orders.addAll(newOrders);
-
-        // Save immediately after change
         OrderPersistence.saveOrders(orders);
     }
 

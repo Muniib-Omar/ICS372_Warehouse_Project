@@ -1,37 +1,43 @@
 package edu.metrostate.warehouseapp;
 
+import com.group.dto.ParsedOrder;
+import com.group.mapper.OrderMapper;
+import com.group.parser.XmlOrderParser;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import model.Item;
-import model.PickupOrder;
-import model.ShipOrder;
-import model.DirectDeliveryOrder;
+import model.Order;
 import model.WarehouseManager;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         WarehouseManager manager = WarehouseManager.getInstance();
 
-        ShipOrder order1 = new ShipOrder("1001", System.currentTimeMillis(), "WallyWorld");
-        order1.addItem(new Item("Test Item A", 2, 50.0));
-        manager.getWarehouse("Warehouse_A").addOrder(order1);
+        try {
+            XmlOrderParser parser = new XmlOrderParser();
+            OrderMapper mapper = new OrderMapper();
 
-        PickupOrder order2 = new PickupOrder("1002", System.currentTimeMillis(), "Bullseye");
-        order2.addItem(new Item("Test Item B", 1, 25.0));
-        manager.getWarehouse("Warehouse_B").addOrder(order2);
+            File file = new File("src/main/resources/ExampleOrder1.xml");
+            List<ParsedOrder> parsedOrders = parser.parse(file);
 
-        DirectDeliveryOrder order3 = new DirectDeliveryOrder("1003", System.currentTimeMillis(), "WallyWorld");
-        order3.addItem(new Item("Test Item C", 3, 15.0));
-        manager.getWarehouse("Warehouse_C").addOrder(order3);
+            for (ParsedOrder parsedOrder : parsedOrders) {
+                Order order = mapper.map(parsedOrder);
+                manager.getWarehouse("Warehouse_A").addOrder(order);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
+        stage.setTitle("Warehouse Dashboard");
         stage.setScene(scene);
         stage.show();
     }
