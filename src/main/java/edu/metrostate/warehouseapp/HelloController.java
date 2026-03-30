@@ -7,6 +7,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import model.*;
 
+import java.util.ArrayList;
+
 /**
  * Controller for the Warehouse Management Dashboard.
  * Handles UI interactions, visual indicators, and order state transitions.
@@ -30,7 +32,6 @@ public class HelloController {
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
         colType.setCellValueFactory(new PropertyValueFactory<>("type"));
 
-        // Visual indicators for Order Type
         colType.setCellFactory(column -> new TableCell<>() {
             @Override
             protected void updateItem(OrderType item, boolean empty) {
@@ -73,6 +74,8 @@ public class HelloController {
             boolean success = selected.startFulfilling();
             if (!success) {
                 showAlert("Action Denied", "Only INCOMING orders can be started.");
+            } else {
+                saveCurrentWarehouseOrders();
             }
             orderTable.refresh();
         }
@@ -85,6 +88,8 @@ public class HelloController {
             boolean success = selected.completeOrder();
             if (!success) {
                 showAlert("Action Denied", "Only FULFILLING orders can be completed.");
+            } else {
+                saveCurrentWarehouseOrders();
             }
             orderTable.refresh();
         }
@@ -97,8 +102,19 @@ public class HelloController {
             boolean success = selected.cancelOrder();
             if (!success) {
                 showAlert("Action Denied", "Completed or already canceled orders cannot be canceled.");
+            } else {
+                saveCurrentWarehouseOrders();
             }
             orderTable.refresh();
+        }
+    }
+
+    private void saveCurrentWarehouseOrders() {
+        String selectedWH = warehouseSelector.getValue();
+        if (selectedWH != null) {
+            OrderPersistence.saveOrders(
+                    new ArrayList<>(manager.getWarehouse(selectedWH).getAllOrders())
+            );
         }
     }
 
