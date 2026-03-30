@@ -4,6 +4,7 @@ import com.group.dto.ParsedOrder;
 import com.group.mapper.OrderMapper;
 import com.group.parser.OrderParser;
 import com.group.parser.XmlOrderParser;
+import javafx.application.Platform;
 
 import java.nio.file.*;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public class DirectoryWatcher {
 
-    private Path folderPath;
+    private final Path folderPath;
 
     public DirectoryWatcher(String folder) {
         this.folderPath = Paths.get(folder);
@@ -40,7 +41,11 @@ public class DirectoryWatcher {
                     }
                 }
 
-                key.reset();
+                boolean valid = key.reset();
+                if (!valid) {
+                    System.out.println("Watch key is no longer valid. Stopping watcher.");
+                    break;
+                }
             }
 
         } catch (Exception e) {
@@ -75,15 +80,24 @@ public class DirectoryWatcher {
                 }
             }
 
-            // Step 3: Add to system
-            if (!realOrders.isEmpty()) {
-                OrderSystem system = new OrderSystem();
-                system.addOrders(realOrders);
-
-                System.out.println("Imported " + realOrders.size() + " orders.");
-            } else {
+            if (realOrders.isEmpty()) {
                 System.out.println("No valid orders found.");
+                return;
             }
+
+            // Step 3: Save to persistence
+            OrderSystem system = new OrderSystem();
+            system.addOrders(realOrders);
+
+            // Step 4: Show in UI by adding to Warehouse_A
+            WarehouseManager manager = WarehouseManager.getInstance();
+            Platform.runLater(() -> {
+                for (Order order : realOrders) {
+                    manager.getWarehouse("Warehouse_A").addOrder(order);
+                }
+            });
+
+            System.out.println("Imported " + realOrders.size() + " orders.");
 
         } catch (Exception e) {
             e.printStackTrace();

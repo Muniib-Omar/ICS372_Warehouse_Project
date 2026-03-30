@@ -25,8 +25,7 @@ public abstract class Order implements Serializable {
         this.items = new ArrayList<>();
     }
 
-    // Requirement 8: Calculate the total price of the order
-    // JavaFX looks for "getTotalPrice" to fill the "Total Price" column
+    // Calculate the total price of the order
     public double getTotalPrice() {
         double total = 0;
         for (Item item : items) {
@@ -35,7 +34,7 @@ public abstract class Order implements Serializable {
         return total;
     }
 
-    // Requirement 5: Logic to prevent starting an order twice
+    // Only INCOMING orders can start fulfilling
     public boolean startFulfilling() {
         if (this.status == OrderStatus.INCOMING) {
             this.status = OrderStatus.FULFILLING;
@@ -44,6 +43,7 @@ public abstract class Order implements Serializable {
         return false;
     }
 
+    // Only FULFILLING orders can be completed
     public boolean completeOrder() {
         if (this.status == OrderStatus.FULFILLING) {
             this.status = OrderStatus.COMPLETED;
@@ -52,19 +52,42 @@ public abstract class Order implements Serializable {
         return false;
     }
 
-    // Feature 1: Allow cancellation
-    public void cancelOrder() {
-        this.status = OrderStatus.CANCELED;
+    // Only INCOMING or FULFILLING orders can be canceled
+    public boolean cancelOrder() {
+        if (this.status == OrderStatus.INCOMING || this.status == OrderStatus.FULFILLING) {
+            this.status = OrderStatus.CANCELED;
+            return true;
+        }
+        return false;
     }
 
-    // Getters - Must be public for the TableView to see them
-    public void addItem(Item item) { items.add(item); }
-    public String getOrderId() { return orderId; }
-    public OrderType getType() { return type; }
-    public OrderStatus getStatus() { return status; }
-    public String getSource() { return source; }
-    public List<Item> getItems() { return items; }
-    public long getOrderDate() { return orderDate; }
+    public void addItem(Item item) {
+        items.add(item);
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public OrderType getType() {
+        return type;
+    }
+
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public List<Item> getItems() {
+        return items;
+    }
+
+    public long getOrderDate() {
+        return orderDate;
+    }
 
     @Override
     public String toString() {

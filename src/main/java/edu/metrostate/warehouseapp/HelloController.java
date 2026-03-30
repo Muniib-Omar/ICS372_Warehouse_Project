@@ -24,18 +24,13 @@ public class HelloController {
 
     @FXML
     public void initialize() {
-        // 1. Link table columns to the Order class variables
-        // This part tells the table WHICH data to look at
         colId.setCellValueFactory(new PropertyValueFactory<>("orderId"));
         colSource.setCellValueFactory(new PropertyValueFactory<>("source"));
         colPrice.setCellValueFactory(new PropertyValueFactory<>("totalPrice"));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
-
-        // FIX ADDED HERE: Connects the "Type" column to the Order's type field
         colType.setCellValueFactory(new PropertyValueFactory<>("type"));
 
-        // 2. FEATURE 4: Visual Indicators for Order Type (Icons/Colors)
-        // This part tells the table HOW to draw the data (Circles/Colors)
+        // Visual indicators for Order Type
         colType.setCellFactory(column -> new TableCell<>() {
             @Override
             protected void updateItem(OrderType item, boolean empty) {
@@ -46,11 +41,11 @@ public class HelloController {
                 } else {
                     Circle icon = new Circle(6);
                     if (item == OrderType.SHIP) {
-                        icon.setFill(Color.DODGERBLUE); // Blue for Ship
+                        icon.setFill(Color.DODGERBLUE);
                     } else if (item == OrderType.PICKUP) {
-                        icon.setFill(Color.ORANGE);     // Orange for Pickup
+                        icon.setFill(Color.ORANGE);
                     } else {
-                        icon.setFill(Color.PURPLE);     // Purple for Direct Delivery
+                        icon.setFill(Color.PURPLE);
                     }
                     setGraphic(icon);
                     setText("  " + item.toString());
@@ -58,17 +53,15 @@ public class HelloController {
             }
         });
 
-        // 3. Populate the Warehouse Selector Dropdown
         warehouseSelector.getItems().addAll(manager.getAllWarehouses().keySet());
         warehouseSelector.getSelectionModel().selectFirst();
-        handleWarehouseChange(); // Refresh the table to show the test data
+        handleWarehouseChange();
     }
 
     @FXML
     private void handleWarehouseChange() {
         String selectedWH = warehouseSelector.getValue();
         if (selectedWH != null) {
-            // Connects the TableView to the ObservableList in the Warehouse model
             orderTable.setItems(manager.getWarehouse(selectedWH).getAllOrders());
         }
     }
@@ -101,7 +94,10 @@ public class HelloController {
     private void handleCancelOrder() {
         Order selected = orderTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
-            selected.cancelOrder();
+            boolean success = selected.cancelOrder();
+            if (!success) {
+                showAlert("Action Denied", "Completed or already canceled orders cannot be canceled.");
+            }
             orderTable.refresh();
         }
     }
