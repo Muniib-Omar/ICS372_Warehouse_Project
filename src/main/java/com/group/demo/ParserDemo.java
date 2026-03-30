@@ -15,7 +15,7 @@ public class ParserDemo {
         XmlOrderParser parser = new XmlOrderParser();
         OrderMapper mapper = new OrderMapper();
 
-        File file = new File("src/main/resources/ExampleOrder1.xml");
+        File file = new File(ParserDemo.class.getResource("/ExampleOrder1.xml").getFile());
 
         List<ParsedOrder> orders = parser.parse(file);
 

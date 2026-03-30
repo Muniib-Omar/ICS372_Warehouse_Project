@@ -1,15 +1,20 @@
 package model;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Warehouse {
-    private String warehouseId;
-    private List<Order> orders;
+    private final String warehouseId;
+
+    // Change: Use ObservableList so the GUI "listens" for new orders
+    private final ObservableList<Order> orders;
 
     public Warehouse(String warehouseId) {
         this.warehouseId = warehouseId;
-        this.orders = new ArrayList<>();
+        // Change: Initialize as an observableArrayList
+        this.orders = FXCollections.observableArrayList();
     }
 
     public void addOrder(Order order) {
@@ -17,7 +22,11 @@ public class Warehouse {
     }
 
     public String getWarehouseId() { return warehouseId; }
-    public List<Order> getAllOrders() { return orders; }
+
+    // Change: Return ObservableList so the TableView updates automatically
+    public ObservableList<Order> getAllOrders() {
+        return orders;
+    }
 
     // Requirement 8: Only show uncompleted orders
     public List<Order> getUncompletedOrders() {

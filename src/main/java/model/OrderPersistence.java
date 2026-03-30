@@ -22,13 +22,22 @@ public class OrderPersistence {
 
     // LOAD
     public static List<Order> loadOrders() {
+        File file = new File(FILE_NAME);
+
+        // If file doesn't exist, return empty list (first run case)
+        if (!file.exists()) {
+            System.out.println("No existing orders file found. Starting fresh.");
+            return new ArrayList<>();
+        }
+
         try (ObjectInputStream ois =
-                     new ObjectInputStream(new FileInputStream(FILE_NAME))) {
+                     new ObjectInputStream(new FileInputStream(file))) {
 
             return (List<Order>) ois.readObject();
 
         } catch (Exception e) {
-            return new ArrayList<>(); // if file doesn't exist
+            e.printStackTrace();
+            return new ArrayList<>();
         }
     }
 }
