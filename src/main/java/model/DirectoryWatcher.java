@@ -2,6 +2,7 @@ package model;
 
 import com.group.dto.ParsedOrder;
 import com.group.mapper.OrderMapper;
+import com.group.parser.JsonOrderParser;
 import com.group.parser.OrderParser;
 import com.group.parser.XmlOrderParser;
 import javafx.application.Platform;
@@ -19,8 +20,7 @@ public class DirectoryWatcher {
     }
 
     public void startWatching() {
-        try (WatchService watchService =
-                     FileSystems.getDefault().newWatchService()) {
+        try (WatchService watchService = FileSystems.getDefault().newWatchService()) {
 
             folderPath.register(
                     watchService,
@@ -49,7 +49,7 @@ public class DirectoryWatcher {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Watcher stopped: " + e.getMessage());
         }
     }
 
@@ -59,16 +59,21 @@ public class DirectoryWatcher {
         try {
             String fileName = filePath.toString().toLowerCase();
 
-            if (!fileName.endsWith(".xml")) {
-                System.out.println("Only XML files supported.");
+            OrderParser parser;
+
+            if (fileName.endsWith(".xml")) {
+                parser = new XmlOrderParser();
+            } else if (fileName.endsWith(".json")) {
+                parser = new JsonOrderParser();
+            } else {
+                System.out.println("Unsupported file type: " + filePath.getFileName());
                 return;
             }
 
-            // Step 1: Parse XML
-            OrderParser parser = new XmlOrderParser();
+            // Step 1: Parse XML or JSON file
             List<ParsedOrder> parsedOrders = parser.parse(filePath.toFile());
 
-            // Step 2: Map to real Orders
+            // Step 2: Convert ParsedOrder objects into real Order objects
             OrderMapper mapper = new OrderMapper();
             List<Order> realOrders = new ArrayList<>();
 
@@ -85,21 +90,23 @@ public class DirectoryWatcher {
                 return;
             }
 
-            // Step 3: Save to persistence
+            // Step 3: Save imported orders
             OrderSystem system = new OrderSystem();
             system.addOrders(realOrders);
 
-            // Step 4: Show in UI by adding to Warehouse_A
+            // Step 4: Add imported orders to the UI warehouse
             WarehouseManager manager = WarehouseManager.getInstance();
+
             Platform.runLater(() -> {
                 for (Order order : realOrders) {
                     manager.getWarehouse("Warehouse_A").addOrder(order);
                 }
+
+                System.out.println("Imported " + realOrders.size() + " orders.");
             });
 
-            System.out.println("Imported " + realOrders.size() + " orders.");
-
         } catch (Exception e) {
+            System.out.println("Import failed: " + e.getMessage());
             e.printStackTrace();
         }
     }

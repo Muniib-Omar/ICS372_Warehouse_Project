@@ -5,6 +5,7 @@ module edu.metrostate.warehouseapp {
     // Add these two lines to fix the XML and JSON errors
     requires java.xml;
     requires com.google.gson;
+    requires kotlin.stdlib;
 
     // Keep these lines so the GUI can see your data
     opens model to javafx.base, javafx.fxml, com.google.gson;

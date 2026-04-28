@@ -1,0 +1,20 @@
+{
+  "orders": [
+    {
+      "id": 9001,
+      "orderType": "Delivery",
+      "items": [
+        {
+          "type": "Notebook",
+          "price": 3.99,
+          "quantity": 4
+        },
+        {
+          "type": "Pens",
+          "price": 1.99,
+          "quantity": 2
+        }
+      ]
+    }
+  ]
+}
