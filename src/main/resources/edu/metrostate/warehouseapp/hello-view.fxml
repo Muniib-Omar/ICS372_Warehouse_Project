@@ -5,7 +5,7 @@
 <?import javafx.geometry.Insets?>
 
 <VBox spacing="10" alignment="CENTER" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="edu.metrostate.warehouseapp.HelloController" prefWidth="900" prefHeight="600">
+      fx:controller="edu.metrostate.warehouseapp.HelloController" prefWidth="900" prefHeight="650">
   <padding>
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
   </padding>
@@ -17,18 +17,36 @@
     <ComboBox fx:id="warehouseSelector" onAction="#handleWarehouseChange" prefWidth="200"/>
   </HBox>
 
-  <!-- The Table showing all orders -->
-  <TableView fx:id="orderTable" VBox.vgrow="ALWAYS">
-    <columns>
-      <TableColumn fx:id="colId" text="Order ID" prefWidth="80"/>
-      <TableColumn fx:id="colType" text="Order Type" prefWidth="180"/>
-      <TableColumn fx:id="colSource" text="Source" prefWidth="120"/>
-      <TableColumn fx:id="colPrice" text="Total Price" prefWidth="100"/>
-      <TableColumn fx:id="colStatus" text="Status" prefWidth="150"/>
-    </columns>
-  </TableView>
+  <!-- Displays orders on top and the selected order's items below. -->
+  <SplitPane orientation="VERTICAL" VBox.vgrow="ALWAYS">
+    <items>
+      <VBox spacing="5">
+        <Label text="Orders" style="-fx-font-weight: bold;"/>
+        <TableView fx:id="orderTable" VBox.vgrow="ALWAYS">
+          <columns>
+            <TableColumn fx:id="colId" text="Order ID" prefWidth="80"/>
+            <TableColumn fx:id="colType" text="Order Type" prefWidth="180"/>
+            <TableColumn fx:id="colSource" text="Source" prefWidth="120"/>
+            <TableColumn fx:id="colPrice" text="Total Price" prefWidth="100"/>
+            <TableColumn fx:id="colStatus" text="Status" prefWidth="150"/>
+          </columns>
+        </TableView>
+      </VBox>
 
-  <!-- Interaction Buttons -->
+      <VBox spacing="5">
+        <Label text="Items in Selected Order" style="-fx-font-weight: bold;"/>
+        <TableView fx:id="itemTable" VBox.vgrow="ALWAYS">
+          <columns>
+            <TableColumn fx:id="colItemName" text="Item" prefWidth="220"/>
+            <TableColumn fx:id="colItemQuantity" text="Quantity" prefWidth="100"/>
+            <TableColumn fx:id="colItemPrice" text="Price" prefWidth="100"/>
+            <TableColumn fx:id="colItemSubtotal" text="Subtotal" prefWidth="100"/>
+          </columns>
+        </TableView>
+      </VBox>
+    </items>
+  </SplitPane>
+
   <HBox spacing="20" alignment="CENTER">
     <Button text="▶ Start Fulfilling" onAction="#handleStartFulfilling"
             style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;"/>
@@ -38,5 +56,10 @@
 
     <Button text="✖ Cancel Order" onAction="#handleCancelOrder"
             style="-fx-background-color: #c0392b; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;"/>
+
+    <!-- Allows users to manually export the current warehouse's orders. -->
+    <Button text="⬇ Export Orders" onAction="#handleExportOrders"
+            style="-fx-background-color: #8e44ad; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;"/>
   </HBox>
 </VBox>
+

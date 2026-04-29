@@ -5,6 +5,7 @@ import com.group.mapper.OrderMapper;
 import com.group.parser.JsonOrderParser;
 import com.group.parser.OrderParser;
 import com.group.parser.XmlOrderParser;
+import com.group.util.ParseLogger;
 import javafx.application.Platform;
 
 import java.nio.file.*;
@@ -66,7 +67,7 @@ public class DirectoryWatcher {
             } else if (fileName.endsWith(".json")) {
                 parser = new JsonOrderParser();
             } else {
-                System.out.println("Unsupported file type: " + filePath.getFileName());
+                ParseLogger.logError("Unsupported file type: " + filePath.getFileName());
                 return;
             }
 
@@ -86,7 +87,7 @@ public class DirectoryWatcher {
             }
 
             if (realOrders.isEmpty()) {
-                System.out.println("No valid orders found.");
+                ParseLogger.logError("No valid orders found.");
                 return;
             }
 
@@ -99,14 +100,19 @@ public class DirectoryWatcher {
 
             Platform.runLater(() -> {
                 for (Order order : realOrders) {
-                    manager.getWarehouse("Warehouse_A").addOrder(order);
+                    // Distribute orders across warehouses (based on orderId)
+                    String[] warehouseIds = {"Warehouse_A", "Warehouse_B", "Warehouse_C"};
+                    int index = Math.abs(order.getOrderId().hashCode()) % warehouseIds.length;
+
+                    manager.getWarehouse(warehouseIds[index]).addOrder(order);
+
                 }
 
-                System.out.println("Imported " + realOrders.size() + " orders.");
+                ParseLogger.logInfo("Imported " + realOrders.size() + " orders.");
             });
 
         } catch (Exception e) {
-            System.out.println("Import failed: " + e.getMessage());
+            ParseLogger.logError("Import failed: " + e.getMessage());
             e.printStackTrace();
         }
     }

@@ -1,5 +1,6 @@
 package edu.metrostate.warehouseapp;
 
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -11,7 +12,8 @@ import java.util.ArrayList;
 
 /**
  * Controller for the Warehouse Management Dashboard.
- * Handles UI interactions, visual indicators, and order state transitions.
+ * Handles UI interactions, visual indicators, order state transitions,
+ * item viewing, and manual order export.
  */
 public class HelloController {
     @FXML private TableView<Order> orderTable;
@@ -22,6 +24,13 @@ public class HelloController {
     @FXML private TableColumn<Order, OrderStatus> colStatus;
     @FXML private ComboBox<String> warehouseSelector;
 
+    // Displays the items for whichever order is currently selected.
+    @FXML private TableView<Item> itemTable;
+    @FXML private TableColumn<Item, String> colItemName;
+    @FXML private TableColumn<Item, Integer> colItemQuantity;
+    @FXML private TableColumn<Item, Double> colItemPrice;
+    @FXML private TableColumn<Item, Double> colItemSubtotal;
+
     private final WarehouseManager manager = WarehouseManager.getInstance();
 
     @FXML
@@ -31,6 +40,21 @@ public class HelloController {
         colPrice.setCellValueFactory(new PropertyValueFactory<>("totalPrice"));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
         colType.setCellValueFactory(new PropertyValueFactory<>("type"));
+
+        // Connects item fields to the item detail table columns.
+        colItemName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        colItemQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        colItemPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+        colItemSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
+
+        // Updates the item table whenever the user selects a different order.
+        orderTable.getSelectionModel().selectedItemProperty().addListener((obs, oldOrder, newOrder) -> {
+            if (newOrder == null) {
+                itemTable.getItems().clear();
+            } else {
+                itemTable.setItems(FXCollections.observableArrayList(newOrder.getItems()));
+            }
+        });
 
         colType.setCellFactory(column -> new TableCell<>() {
             @Override
@@ -64,6 +88,7 @@ public class HelloController {
         String selectedWH = warehouseSelector.getValue();
         if (selectedWH != null) {
             orderTable.setItems(manager.getWarehouse(selectedWH).getAllOrders());
+            itemTable.getItems().clear();
         }
     }
 
@@ -109,6 +134,13 @@ public class HelloController {
         }
     }
 
+    // Manually exports the currently selected warehouse's orders.
+    @FXML
+    private void handleExportOrders() {
+        saveCurrentWarehouseOrders();
+        showInfo("Export Complete", "Current warehouse orders were exported successfully.");
+    }
+
     private void saveCurrentWarehouseOrders() {
         String selectedWH = warehouseSelector.getValue();
         if (selectedWH != null) {
@@ -125,4 +157,14 @@ public class HelloController {
         alert.setContentText(content);
         alert.showAndWait();
     }
+
+    // Shows success messages for completed UI actions.
+    private void showInfo(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
 }
+

@@ -27,7 +27,12 @@ public class HelloApplication extends Application {
         // Step 1: Load previously saved orders into the UI
         List<Order> savedOrders = orderSystem.getOrders();
         for (Order order : savedOrders) {
-            manager.getWarehouse("Warehouse_A").addOrder(order);
+            // Distribute orders across warehouses (simple round-robin based on orderId)
+            String[] warehouseIds = {"Warehouse_A", "Warehouse_B", "Warehouse_C"};
+            int index = Math.abs(order.getOrderId().hashCode()) % warehouseIds.length;
+
+            manager.getWarehouse(warehouseIds[index]).addOrder(order);
+
         }
 
         // Step 2: If no saved orders exist yet, import ExampleOrder1.xml once
@@ -44,7 +49,12 @@ public class HelloApplication extends Application {
                 for (ParsedOrder parsedOrder : parsedOrders) {
                     Order order = mapper.map(parsedOrder);
                     importedOrders.add(order);
-                    manager.getWarehouse("Warehouse_A").addOrder(order);
+                    // Distribute orders across warehouses ( based on orderId)
+                    String[] warehouseIds = {"Warehouse_A", "Warehouse_B", "Warehouse_C"};
+                    int index = Math.abs(order.getOrderId().hashCode()) % warehouseIds.length;
+
+                    manager.getWarehouse(warehouseIds[index]).addOrder(order);
+
                 }
 
                 if (!importedOrders.isEmpty()) {
