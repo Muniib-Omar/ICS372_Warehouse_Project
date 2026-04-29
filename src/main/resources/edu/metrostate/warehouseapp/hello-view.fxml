@@ -34,9 +34,11 @@
       </VBox>
 
       <VBox spacing="5">
-        <Label text="Items in Selected Order" style="-fx-font-weight: bold;"/>
+        <Label text="Order Details / Fulfillment Panel" style="-fx-font-weight: bold;"/>
+        <Label fx:id="selectedOrderLabel" text="Select an order to view details"
+               style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
         <TableView fx:id="itemTable" VBox.vgrow="ALWAYS">
-          <columns>
+        <columns>
             <TableColumn fx:id="colItemName" text="Item" prefWidth="220"/>
             <TableColumn fx:id="colItemQuantity" text="Quantity" prefWidth="100"/>
             <TableColumn fx:id="colItemPrice" text="Price" prefWidth="100"/>

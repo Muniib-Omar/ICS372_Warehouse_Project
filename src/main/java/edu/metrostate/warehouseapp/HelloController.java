@@ -30,6 +30,7 @@ public class HelloController {
     @FXML private TableColumn<Item, Integer> colItemQuantity;
     @FXML private TableColumn<Item, Double> colItemPrice;
     @FXML private TableColumn<Item, Double> colItemSubtotal;
+    @FXML private Label selectedOrderLabel;
 
     private final WarehouseManager manager = WarehouseManager.getInstance();
 
@@ -47,12 +48,19 @@ public class HelloController {
         colItemPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
         colItemSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
 
-        // Updates the item table whenever the user selects a different order.
+        // Updates the item table and summary whenever the user selects a different order.
         orderTable.getSelectionModel().selectedItemProperty().addListener((obs, oldOrder, newOrder) -> {
             if (newOrder == null) {
                 itemTable.getItems().clear();
+                selectedOrderLabel.setText("Select an order to view details");
             } else {
                 itemTable.setItems(FXCollections.observableArrayList(newOrder.getItems()));
+                selectedOrderLabel.setText(
+                        "Order #" + newOrder.getOrderId()
+                                + " | Type: " + newOrder.getType()
+                                + " | Status: " + newOrder.getStatus()
+                                + " | Total: $" + String.format("%.2f", newOrder.getTotalPrice())
+                );
             }
         });
 
@@ -89,6 +97,7 @@ public class HelloController {
         if (selectedWH != null) {
             orderTable.setItems(manager.getWarehouse(selectedWH).getAllOrders());
             itemTable.getItems().clear();
+            selectedOrderLabel.setText("Select an order to view details");
         }
     }
 
